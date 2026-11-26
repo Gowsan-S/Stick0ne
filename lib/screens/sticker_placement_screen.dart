@@ -9,6 +9,7 @@ import '../models/sticker_placement.dart';
 import '../providers/canvas_provider.dart';
 import '../providers/sticker_provider.dart';
 import '../widgets/vector_stickers.dart';
+import '../widgets/stick0ne_logo.dart';
 
 class StickerPlacementScreen extends StatefulWidget {
   final VoidCallback onNavigateToSearch;
@@ -743,7 +744,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
       ),
       child: Row(
         children: [
-          if (canvas.placements.isNotEmpty)
+          if (canvas.placements.isNotEmpty) ...[
             GestureDetector(
               onTap: _clearCanvasConfirm,
               child: Container(
@@ -772,25 +773,27 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                 ),
               ),
             ),
-
-          const SizedBox(width: 10),
+            const SizedBox(width: 10),
+          ],
 
           Expanded(
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
-                  child: Text(
-                    canvas.placements.isEmpty ? 'Blank Canvas' : canvas.currentDesignName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.4,
-                    ),
-                  ),
+                  child: canvas.placements.isEmpty
+                      ? const Stick0neLogo(height: 15, color: Color(0xFFE5E5EA))
+                      : Text(
+                          canvas.currentDesignName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
                 ),
                 if (isOverlayActive) ...[
                   const SizedBox(width: 6),

@@ -10,6 +10,7 @@ import '../providers/canvas_provider.dart';
 import '../providers/sticker_provider.dart';
 import '../services/storage_service.dart';
 import '../widgets/drawing_canvas.dart';
+import '../widgets/stick0ne_logo.dart';
 import 'photo_cutter_screen.dart';
 
 class StickerCreatorScreen extends StatefulWidget {
@@ -311,23 +312,15 @@ class _StickerCreatorScreenState extends State<StickerCreatorScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
-          Text(
-            'STUDIO',
-            style: TextStyle(
-              color: Color(0xFF8E8E93),
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.4,
-            ),
-          ),
-          SizedBox(height: 2),
+          Stick0neLogo(height: 15, color: Color(0xFFE5E5EA)),
+          SizedBox(height: 6),
           Text(
             'Create Sticker',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: 28,
               fontWeight: FontWeight.w800,
-              letterSpacing: -0.9,
+              letterSpacing: -0.5,
             ),
           ),
         ],

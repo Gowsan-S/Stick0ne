@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/canvas_provider.dart';
+import '../widgets/stick0ne_logo.dart';
 
 class PreviewDisplayModal extends StatefulWidget {
   final Uint8List imageBytes;
@@ -153,6 +154,8 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
+                        Stick0neLogo(height: 14, color: Color(0xFFE5E5EA)),
+                        SizedBox(height: 4),
                         Text(
                           'Stick to Screen',
                           style: TextStyle(

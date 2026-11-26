@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stick0ne/main.dart';
+import 'package:stick0ne/widgets/stick0ne_logo.dart';
 import 'package:stick0ne/providers/canvas_provider.dart';
 import 'package:stick0ne/screens/preview_display_modal.dart';
 import 'package:stick0ne/screens/sticker_placement_screen.dart';
@@ -21,7 +22,7 @@ void main() {
     await tester.pumpWidget(const Stick0neApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('STICK0NE'), findsOneWidget);
+    expect(find.byType(Stick0neLogo), findsWidgets);
     expect(find.text('Explore Stickers'), findsOneWidget);
     expect(find.text('Explore'), findsOneWidget);
     expect(find.text('Create'), findsOneWidget);
