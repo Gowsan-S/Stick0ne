@@ -1016,7 +1016,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                       ),
                     ),
                     Container(
-                      width: 40,
+                      width: 48,
                       alignment: Alignment.centerRight,
                       child: Text(
                         '${(activePlacement.opacity * 100).round()}%',
@@ -1043,7 +1043,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                       GestureDetector(
                         onTap: () => _deleteSinglePlacement(activePlacement.id),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
                           decoration: BoxDecoration(
                             color: const Color(0x33FF453A),
                             borderRadius: BorderRadius.circular(14),
@@ -1067,13 +1067,13 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 5),
 
                       // Quick Add button to place N stickers
                       GestureDetector(
                         onTap: () => _showAddStickerSheet(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
                           decoration: BoxDecoration(
                             color: const Color(0x29FFFFFF), // Liquid frosted pill
                             borderRadius: BorderRadius.circular(14),
@@ -1097,14 +1097,14 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 5),
 
                       // If stuck on screen: Show "Remove Screen" + "Update Screen" (Feature 4 Edit/Delete after sticked)
                       if (isOverlayActive) ...[
                         GestureDetector(
                           onTap: _removeFromScreenDirectly,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
                             decoration: BoxDecoration(
                               color: const Color(0x29FFFFFF), // Liquid frosted pill
                               borderRadius: BorderRadius.circular(14),
@@ -1116,7 +1116,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                                 Icon(CupertinoIcons.clear_circled, color: Color(0xFFE5E5EA), size: 13),
                                 SizedBox(width: 4),
                                 Text(
-                                  'Remove Screen',
+                                  'Remove',
                                   style: TextStyle(
                                     color: Color(0xFFE5E5EA),
                                     fontSize: 12,
@@ -1127,7 +1127,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 5),
                         ElevatedButton.icon(
                           onPressed: _isExporting ? null : _updateScreenDirectly,
                           icon: const Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.black, size: 13),
@@ -1143,7 +1143,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             backgroundColor: const Color(0xF2FFFFFF),
                             foregroundColor: Colors.black,
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                         ),
@@ -1164,7 +1164,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             backgroundColor: const Color(0xF2FFFFFF),
                             foregroundColor: Colors.black,
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                         ),

@@ -34,14 +34,6 @@ Future<void> _loadTestFonts() async {
       await materialLoader.load();
     }
 
-    // Ethnocentric font - exact match for the official Stick0ne SVG logo letterforms
-    final ethnocentricFile = File('assets/fonts/Ethnocentric.ttf');
-    if (ethnocentricFile.existsSync()) {
-      final ethnoLoader = FontLoader('Ethnocentric');
-      ethnoLoader.addFont(Future.value(ByteData.view(ethnocentricFile.readAsBytesSync().buffer)));
-      await ethnoLoader.load();
-    }
-
     // Chakra Petch Regular, Bold, SemiBold for cyber-geometric logo-matched typography
     final chakraRegular = File('assets/fonts/ChakraPetch-Regular.ttf');
     if (chakraRegular.existsSync()) {
@@ -99,7 +91,7 @@ void main() {
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
-            fontFamily: 'Ethnocentric',
+            fontFamily: 'ChakraPetch',
             scaffoldBackgroundColor: const Color(0xFF000000),
             colorScheme: const ColorScheme.dark(
               primary: Colors.white,
@@ -161,9 +153,11 @@ void main() {
     await saveScreenshot('2_canvas_customizer');
 
     // 3. SCREENSHOT 3: Setup Canvas with iOS 18 Lock Screen Overlay
-    canvasProvider.setPreviewOverlay(PreviewOverlayMode.lockScreen);
+    // 3. SCREENSHOT 3: Active "Stuck on Screen" State
+    canvasProvider.setOverlayActiveForTest(true);
     await tester.pumpAndSettle();
     await saveScreenshot('3_lockscreen_overlay');
+    canvasProvider.setOverlayActiveForTest(false);
 
     // 4. SCREENSHOT 4: Studio / Create Sticker Tab
     await tester.tap(find.text('Create'));
@@ -181,9 +175,15 @@ void main() {
     final sampleBytes = File('screenshots/2_canvas_customizer.png').readAsBytesSync();
     await tester.pumpWidget(
       buildTestApp(
-        PreviewDisplayModal(
-          imageBytes: sampleBytes,
-          transparentBytes: sampleBytes,
+        Scaffold(
+          backgroundColor: Colors.black,
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: PreviewDisplayModal(
+              imageBytes: sampleBytes,
+              transparentBytes: sampleBytes,
+            ),
+          ),
         ),
       ),
     );

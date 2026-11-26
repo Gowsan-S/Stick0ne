@@ -61,6 +61,12 @@ class CanvasProvider extends ChangeNotifier {
   bool get isLoadingDesigns => _isLoadingDesigns;
   bool get isOverlayActive => _isOverlayActive;
 
+  @visibleForTesting
+  void setOverlayActiveForTest(bool active) {
+    _isOverlayActive = active;
+    notifyListeners();
+  }
+
   StickerPlacement? get selectedPlacement {
     if (_selectedPlacementId == null) return null;
     try {

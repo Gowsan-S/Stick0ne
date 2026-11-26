@@ -65,12 +65,6 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: Ethnocentric
-      fonts:
-        - asset: assets/fonts/Ethnocentric.ttf
-    - family: Orbitron
-      fonts:
-        - asset: assets/fonts/Orbitron.ttf
     - family: ChakraPetch
       fonts:
         - asset: assets/fonts/ChakraPetch-Regular.ttf

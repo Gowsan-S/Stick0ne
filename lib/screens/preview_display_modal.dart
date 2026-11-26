@@ -121,18 +121,20 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
     final canvasProvider = context.watch<CanvasProvider>();
     final isOverlayActive = canvasProvider.isOverlayActive;
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.90,
-          decoration: BoxDecoration(
-            color: const Color(0xF0141416),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            border: Border.all(color: const Color(0x26FFFFFF), width: 0.8),
-          ),
-          child: Column(
+    return Material(
+      type: MaterialType.transparency,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.90,
+            decoration: BoxDecoration(
+              color: const Color(0xF0141416),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              border: Border.all(color: const Color(0x26FFFFFF), width: 0.8),
+            ),
+            child: Column(
             children: [
               // iOS Grabber bar
               Container(
@@ -160,9 +162,9 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
                           'Stick to Screen',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                            letterSpacing: -0.6,
                           ),
                         ),
                         SizedBox(height: 2),
@@ -473,8 +475,9 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildFeatureRow({
     required IconData icon,
