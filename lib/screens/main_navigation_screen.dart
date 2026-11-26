@@ -65,21 +65,31 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(32),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xCC1A1A1E), // Frosted dark glass
                 borderRadius: BorderRadius.circular(32),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0x38FFFFFF), // Liquid glass top refraction highlight
+                    Color(0x142C2C2E), // Fluid translucent center (crystal clear view of stickers)
+                    Color(0x24000000), // Liquid bottom refraction depth
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
                 border: Border.all(
-                  color: const Color(0x33FFFFFF), // Ultra-fine frosted border
-                  width: 0.8,
+                  color: const Color(0x40FFFFFF), // 25% white glossy refraction rim
+                  width: 1.0,
                 ),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x66000000),
-                    blurRadius: 20,
+                    color: Color(0x4D000000),
+                    blurRadius: 28,
+                    spreadRadius: -4,
                     offset: Offset(0, 10),
                   ),
                 ],
@@ -110,8 +120,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? const Color(0xF2FFFFFF) : Colors.transparent,
             borderRadius: BorderRadius.circular(24),
+            border: isSelected
+                ? Border.all(color: const Color(0x66FFFFFF), width: 0.8)
+                : null,
+            boxShadow: isSelected
+                ? const [
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +141,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               Icon(
                 icon,
                 size: 20,
-                color: isSelected ? Colors.black : const Color(0xFF8E8E93),
+                color: isSelected ? Colors.black : const Color(0xB3FFFFFF),
               ),
               const SizedBox(height: 2),
               Text(
@@ -127,7 +149,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? Colors.black : const Color(0xFF8E8E93),
+                  color: isSelected ? Colors.black : const Color(0xB3FFFFFF),
                   letterSpacing: -0.2,
                 ),
               ),

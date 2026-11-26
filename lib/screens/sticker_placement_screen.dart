@@ -715,7 +715,11 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
               bottom: 88, // elevated safely above 64px tab bar + padding
               left: 0,
               right: 0,
-              child: _buildTransparencyBottomPanel(canvas, activePlacement),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: _gesturePlacementId != null ? 0.20 : 1.0,
+                child: _buildTransparencyBottomPanel(canvas, activePlacement),
+              ),
             ),
         ],
       ),
@@ -946,22 +950,32 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          filter: ui.ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xE61C1C1E),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(28),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0x38FFFFFF), // Liquid glass top refraction highlight
+                  Color(0x142C2C2E), // Fluid translucent center (crystal clear view of stickers)
+                  Color(0x24000000), // Liquid bottom refraction depth
+                ],
+                stops: [0.0, 0.5, 1.0],
+              ),
               border: Border.all(
-                color: const Color(0x33FFFFFF),
-                width: 0.8,
+                color: const Color(0x40FFFFFF), // 25% white glossy refraction rim
+                width: 1.0,
               ),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x80000000),
-                  blurRadius: 20,
-                  offset: Offset(0, 8),
+                  color: Color(0x4D000000),
+                  blurRadius: 28,
+                  spreadRadius: -4,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
@@ -981,7 +995,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                     const Text(
                       'Transparency',
                       style: TextStyle(
-                        color: Color(0xFF8E8E93),
+                        color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -992,7 +1006,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         min: 0.05,
                         max: 1.0,
                         activeColor: Colors.white,
-                        inactiveColor: const Color(0xFF3A3A3C),
+                        inactiveColor: const Color(0x33FFFFFF), // Translucent frosted track
                         onChanged: (val) {
                           canvas.updatePlacementOpacity(activePlacement.id, val);
                         },
@@ -1028,9 +1042,9 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0x26FF453A),
+                            color: const Color(0x33FF453A),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0x4DFF453A), width: 0.8),
+                            border: Border.all(color: const Color(0x66FF453A), width: 0.9),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1058,9 +1072,9 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2C2C2E),
+                            color: const Color(0x29FFFFFF), // Liquid frosted pill
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
+                            border: Border.all(color: const Color(0x40FFFFFF), width: 0.9),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1089,19 +1103,19 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2C2C2E),
+                              color: const Color(0x29FFFFFF), // Liquid frosted pill
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
+                              border: Border.all(color: const Color(0x40FFFFFF), width: 0.9),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(CupertinoIcons.clear_circled, color: Color(0xFF8E8E93), size: 13),
+                                Icon(CupertinoIcons.clear_circled, color: Color(0xFFE5E5EA), size: 13),
                                 SizedBox(width: 4),
                                 Text(
                                   'Remove Screen',
                                   style: TextStyle(
-                                    color: Color(0xFF8E8E93),
+                                    color: Color(0xFFE5E5EA),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1123,11 +1137,11 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: const Color(0xF2FFFFFF),
                             foregroundColor: Colors.black,
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                            elevation: 0,
                           ),
                         ),
                       ] else ...[
@@ -1144,11 +1158,11 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: const Color(0xF2FFFFFF),
                             foregroundColor: Colors.black,
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                            elevation: 0,
                           ),
                         ),
                       ],
