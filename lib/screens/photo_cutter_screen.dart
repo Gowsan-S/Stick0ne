@@ -29,6 +29,9 @@ class _PhotoCutterScreenState extends State<PhotoCutterScreen> {
   // Shape Cut Normalized Rect (relative to image display rect: 0.0 to 1.0)
   Rect _shapeNormRect = const Rect.fromLTWH(0.15, 0.15, 0.70, 0.70);
 
+  // Active destination rect of rendered image in view coordinates
+  Rect? _currentDestRect;
+
   // Dragging active handle or center
   int? _activeCorner; // 0: TL, 1: TR, 2: BR, 3: BL, 4: Center
   Offset? _lastPanPos;
@@ -249,33 +252,30 @@ class _PhotoCutterScreenState extends State<PhotoCutterScreen> {
           ),
 
           // Cut & Done Button
-          Builder(
-            builder: (ctx) {
-              return ElevatedButton.icon(
-                onPressed: () {
-                  final renderBox = ctx.findAncestorRenderObjectOfType<RenderBox>();
-                  final size = renderBox?.size ?? MediaQuery.of(context).size;
-                  final destRect = _calculateImageDestination(Size(size.width, size.height - 220));
-                  _performCut(destRect);
-                },
-                icon: const Icon(CupertinoIcons.scissors, color: Colors.black, size: 16),
-                label: const Text(
-                  'Cut',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-              );
+          ElevatedButton.icon(
+            onPressed: () {
+              final destRect = _currentDestRect ??
+                  _calculateImageDestination(
+                    Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - 200),
+                  );
+              _performCut(destRect);
             },
+            icon: const Icon(CupertinoIcons.scissors, color: Colors.black, size: 16),
+            label: const Text(
+              'Cut',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
           ),
         ],
       ),
@@ -350,6 +350,7 @@ class _PhotoCutterScreenState extends State<PhotoCutterScreen> {
       builder: (context, constraints) {
         final viewSize = Size(constraints.maxWidth, constraints.maxHeight);
         final destRect = _calculateImageDestination(viewSize);
+        _currentDestRect = destRect;
 
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -462,51 +463,54 @@ class _PhotoCutterScreenState extends State<PhotoCutterScreen> {
   }
 
   Widget _buildBottomControls() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
-      decoration: const BoxDecoration(
-        color: Color(0xFF141416),
-        border: Border(top: BorderSide(color: Color(0x26FFFFFF), width: 0.8)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Reset / Clear path
-          GestureDetector(
-            onTap: _resetCut,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1C1C1E),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(CupertinoIcons.arrow_counterclockwise, color: Colors.white, size: 14),
-                  SizedBox(width: 6),
-                  Text('Reset Cut', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                ],
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+        decoration: const BoxDecoration(
+          color: Color(0xFF141416),
+          border: Border(top: BorderSide(color: Color(0x26FFFFFF), width: 0.8)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Reset / Clear path
+            GestureDetector(
+              onTap: _resetCut,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1C1C1E),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(CupertinoIcons.arrow_counterclockwise, color: Colors.white, size: 14),
+                    SizedBox(width: 6),
+                    Text('Reset Cut', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Instruction text
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: Text(
-                _cutMode == CutMode.freehand
-                    ? 'Trace an outline with your finger'
-                    : 'Drag handles to size, drag inside to position',
-                textAlign: TextAlign.end,
-                maxLines: 2,
-                style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12),
+            // Instruction text
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  _cutMode == CutMode.freehand
+                      ? 'Trace an outline with your finger'
+                      : 'Drag handles to size, drag inside to position',
+                  textAlign: TextAlign.end,
+                  maxLines: 2,
+                  style: const TextStyle(color: Color(0xFF8E8E93), fontSize: 12),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

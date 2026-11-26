@@ -159,6 +159,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
     }
 
     HapticFeedback.mediumImpact();
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     setState(() => _isExporting = true);
 
     try {
@@ -173,14 +174,14 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
       if (fullBoundary == null) {
         throw Exception('Canvas render boundary not found');
       }
-      final fullImage = await fullBoundary.toImage(pixelRatio: 3.5);
+      final fullImage = await fullBoundary.toImage(pixelRatio: devicePixelRatio);
       final fullByteData = await fullImage.toByteData(format: ui.ImageByteFormat.png);
 
       final stickersBoundary = _stickersRepaintKey.currentContext?.findRenderObject()
           as RenderRepaintBoundary?;
       Uint8List? transparentBytes;
       if (stickersBoundary != null) {
-        final transparentImage = await stickersBoundary.toImage(pixelRatio: 3.5);
+        final transparentImage = await stickersBoundary.toImage(pixelRatio: devicePixelRatio);
         final transByteData =
             await transparentImage.toByteData(format: ui.ImageByteFormat.png);
         transparentBytes = transByteData?.buffer.asUint8List();
@@ -290,6 +291,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
     }
 
     HapticFeedback.heavyImpact();
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     setState(() => _isExporting = true);
 
     try {
@@ -305,7 +307,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
         throw Exception('Canvas render boundary not found');
       }
 
-      final transparentImage = await stickersBoundary.toImage(pixelRatio: 3.5);
+      final transparentImage = await stickersBoundary.toImage(pixelRatio: devicePixelRatio);
       final transByteData =
           await transparentImage.toByteData(format: ui.ImageByteFormat.png);
       final transparentBytes = transByteData?.buffer.asUint8List();
@@ -689,33 +691,33 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            // 1. FULL-SCREEN BLANK CANVAS
-            Positioned.fill(
-              child: _buildBlankScreenCanvas(canvas),
-            ),
+      body: Stack(
+        children: [
+          // 1. FULL-SCREEN BLANK CANVAS (Matches physical phone screen 1:1)
+          Positioned.fill(
+            child: _buildBlankScreenCanvas(canvas),
+          ),
 
-            // 2. MINIMALIST FLOATING TOP BAR
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
+          // 2. MINIMALIST FLOATING TOP BAR (Padded by SafeArea)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              bottom: false,
               child: _buildIosTopBar(canvas),
             ),
+          ),
 
-            // 3. TRANSPARENCY & EDIT/DELETE PANEL BELOW (Floating cleanly above bottom tab bar)
-            if (activePlacement != null)
-              Positioned(
-                bottom: 88, // elevated safely above 64px tab bar + padding
-                left: 0,
-                right: 0,
-                child: _buildTransparencyBottomPanel(canvas, activePlacement),
-              ),
-          ],
-        ),
+          // 3. TRANSPARENCY & EDIT/DELETE PANEL BELOW (Floating cleanly above bottom tab bar)
+          if (activePlacement != null)
+            Positioned(
+              bottom: 88, // elevated safely above 64px tab bar + padding
+              left: 0,
+              right: 0,
+              child: _buildTransparencyBottomPanel(canvas, activePlacement),
+            ),
+        ],
       ),
     );
   }
@@ -767,41 +769,44 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
               ),
             ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
 
           Expanded(
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  canvas.placements.isEmpty ? 'Blank Canvas' : canvas.currentDesignName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.4,
+                Flexible(
+                  child: Text(
+                    canvas.placements.isEmpty ? 'Blank Canvas' : canvas.currentDesignName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
+                    ),
                   ),
                 ),
                 if (isOverlayActive) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
                     decoration: BoxDecoration(
                       color: const Color(0x3330D158),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: const Color(0xFF30D158), width: 0.8),
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(CupertinoIcons.pin_fill, color: Color(0xFF30D158), size: 10),
+                        Icon(CupertinoIcons.pin_fill, color: Color(0xFF30D158), size: 9),
                         SizedBox(width: 3),
                         Text(
-                          'LIVE ON SCREEN',
+                          'ON SCREEN',
                           style: TextStyle(
                             color: Color(0xFF30D158),
-                            fontSize: 10,
+                            fontSize: 9,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -812,6 +817,8 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
               ],
             ),
           ),
+
+          const SizedBox(width: 8),
 
           GestureDetector(
             onTap: () => _showAddStickerSheet(context),
@@ -1008,27 +1015,28 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
 
                 const SizedBox(height: 8),
 
-                // 2. Action Controls Row: Delete / Edit & Stick / Update / Remove
+                // 2. Action Controls Row: Delete / Add / Remove Screen / Update Screen / Stick to Screen
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       // Delete Selected Sticker Button
                       GestureDetector(
                         onTap: () => _deleteSinglePlacement(activePlacement.id),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           decoration: BoxDecoration(
                             color: const Color(0x26FF453A),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: const Color(0x4DFF453A), width: 0.8),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(CupertinoIcons.trash, color: Color(0xFFFF453A), size: 14),
-                              SizedBox(width: 5),
+                            children: [
+                              Icon(CupertinoIcons.trash, color: Color(0xFFFF453A), size: 13),
+                              SizedBox(width: 4),
                               Text(
                                 'Delete',
                                 style: TextStyle(
@@ -1042,7 +1050,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
 
                       // Quick Add button to place N stickers
                       GestureDetector(
@@ -1057,7 +1065,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(CupertinoIcons.plus, color: Colors.white, size: 14),
+                              Icon(CupertinoIcons.plus, color: Colors.white, size: 13),
                               SizedBox(width: 4),
                               Text(
                                 'Add',
@@ -1072,23 +1080,23 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
 
                       // If stuck on screen: Show "Remove Screen" + "Update Screen" (Feature 4 Edit/Delete after sticked)
                       if (isOverlayActive) ...[
                         GestureDetector(
                           onTap: _removeFromScreenDirectly,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                             decoration: BoxDecoration(
                               color: const Color(0xFF2C2C2E),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(CupertinoIcons.clear_circled, color: Color(0xFF8E8E93), size: 14),
+                              children: [
+                                Icon(CupertinoIcons.clear_circled, color: Color(0xFF8E8E93), size: 13),
                                 SizedBox(width: 4),
                                 Text(
                                   'Remove Screen',
@@ -1102,12 +1110,12 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         ElevatedButton.icon(
                           onPressed: _isExporting ? null : _updateScreenDirectly,
                           icon: const Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.black, size: 13),
                           label: const Text(
-                            'Update Screen',
+                            'Update',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 12,
@@ -1117,7 +1125,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                             elevation: 0,
                           ),
@@ -1138,7 +1146,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                             elevation: 0,
                           ),
