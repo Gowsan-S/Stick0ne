@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -107,47 +108,85 @@ class _StickerSearchScreenState extends State<StickerSearchScreen> {
   Widget _buildIosSearchBar(StickerProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Container(
-        height: 42,
-        decoration: BoxDecoration(
-          color: const Color(0xFF1C1C1E),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0x26FFFFFF), width: 0.8),
-        ),
-        child: Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(CupertinoIcons.search, color: Color(0xFF8E8E93), size: 18),
-            ),
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                onChanged: provider.setSearchQuery,
-                style: const TextStyle(color: Colors.white, fontSize: 15),
-                cursorColor: Colors.white,
-                decoration: const InputDecoration(
-                  hintText: 'Search stickers, tags, emojis...',
-                  hintStyle: TextStyle(color: Color(0xFF8E8E93), fontSize: 14),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 10),
-                ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            height: 46,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0x40FFFFFF), // Luminous iOS glass sheen
+                  Color(0x1FFFFFFF), // Frosted optical body
+                  Color(0x14FFFFFF), // Transparent depth
+                ],
+                stops: [0.0, 0.5, 1.0],
               ),
-            ),
-            if (_searchController.text.isNotEmpty)
-              GestureDetector(
-                onTap: () {
-                  _searchController.clear();
-                  provider.setSearchQuery('');
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Icon(CupertinoIcons.clear_circled_solid,
-                      color: Color(0xFF8E8E93), size: 16),
-                ),
+              border: Border.all(
+                color: const Color(0x8CFFFFFF), // Luminous glass specular rim
+                width: 1.2,
               ),
-          ],
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x33000000),
+                  blurRadius: 18,
+                  offset: Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Color(0x1AFFFFFF),
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 14, right: 10),
+                  child: Icon(CupertinoIcons.search, color: Colors.white, size: 20),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: provider.setSearchQuery,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      hintText: 'Search stickers, tags, emojis...',
+                      hintStyle: TextStyle(
+                        color: Color(0xCCFFFFFF),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    ),
+                  ),
+                ),
+                if (_searchController.text.isNotEmpty)
+                  GestureDetector(
+                    onTap: () {
+                      _searchController.clear();
+                      provider.setSearchQuery('');
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Icon(CupertinoIcons.clear_circled_solid,
+                          color: Color(0x99FFFFFF), size: 18),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

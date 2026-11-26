@@ -957,56 +957,63 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         child: BackdropFilter(
           filter: ui.ImageFilter.blur(
-            sigmaX: isGesturing ? 4 : 16,
-            sigmaY: isGesturing ? 4 : 16,
+            sigmaX: isGesturing ? 4 : 20,
+            sigmaY: isGesturing ? 4 : 20,
           ),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(32),
               gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
-                  Color(0x3DFFFFFF), // Crystalline specular highlight
-                  Color(0x14FFFFFF), // Fluid transparent optical glass body
-                  Color(0x08FFFFFF), // Clean transparent bottom
+                  Color(0x40FFFFFF), // Luminous iOS specular glass sheen
+                  Color(0x1FFFFFFF), // Frosted optical glass body
+                  Color(0x14FFFFFF), // Transparent depth
                 ],
                 stops: [0.0, 0.45, 1.0],
               ),
               border: Border.all(
-                color: const Color(0x66FFFFFF), // 40% white crystalline specular rim
+                color: const Color(0x8CFFFFFF), // 55% white luminous specular rim
                 width: 1.2,
               ),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x33000000),
-                  blurRadius: 24,
-                  spreadRadius: -4,
-                  offset: Offset(0, 8),
+                  color: Color(0x40000000),
+                  blurRadius: 28,
+                  spreadRadius: -2,
+                  offset: Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Color(0x1AFFFFFF),
+                  blurRadius: 2,
+                  spreadRadius: 0,
+                  offset: Offset(0, 1),
                 ),
               ],
             ),
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Top Glass Specular Reflection Highlight Line
                 Container(
-                  height: 1,
+                  height: 1.2,
                   margin: const EdgeInsets.only(bottom: 8),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(1),
+                    gradient: const LinearGradient(
                       colors: [
                         Colors.transparent,
-                        Color(0x4DFFFFFF),
-                        Color(0x99FFFFFF),
-                        Color(0x4DFFFFFF),
+                        Color(0x66FFFFFF),
+                        Color(0xB3FFFFFF),
+                        Color(0x66FFFFFF),
                         Colors.transparent,
                       ],
-                      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+                      stops: [0.0, 0.2, 0.5, 0.8, 1.0],
                     ),
                   ),
                 ),
@@ -1068,11 +1075,18 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                       GestureDetector(
                         onTap: () => _deleteSinglePlacement(activePlacement.id),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                           decoration: BoxDecoration(
                             color: const Color(0x33FF453A),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0x66FF453A), width: 0.9),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0x80FF453A), width: 1.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x26FF453A),
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1092,17 +1106,24 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 6),
 
                       // Quick Add button to place N stickers
                       GestureDetector(
                         onTap: () => _showAddStickerSheet(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                           decoration: BoxDecoration(
                             color: const Color(0x29FFFFFF), // Liquid frosted pill
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0x40FFFFFF), width: 0.9),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0x8CFFFFFF), width: 1.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x1A000000),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1122,18 +1143,18 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                         ),
                       ),
 
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 6),
 
                       // If stuck on screen: Show "Remove Screen" + "Update Screen" (Feature 4 Edit/Delete after sticked)
                       if (isOverlayActive) ...[
                         GestureDetector(
                           onTap: _removeFromScreenDirectly,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                             decoration: BoxDecoration(
                               color: const Color(0x29FFFFFF), // Liquid frosted pill
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0x40FFFFFF), width: 0.9),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: const Color(0x8CFFFFFF), width: 1.0),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
@@ -1152,7 +1173,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 6),
                         ElevatedButton.icon(
                           onPressed: _isExporting ? null : _updateScreenDirectly,
                           icon: const Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.black, size: 13),
@@ -1165,11 +1186,15 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xF2FFFFFF),
+                            backgroundColor: const Color(0xF5FFFFFF),
                             foregroundColor: Colors.black,
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: const BorderSide(color: Colors.white, width: 1.0),
+                            ),
+                            shadowColor: const Color(0x33FFFFFF),
                           ),
                         ),
                       ] else ...[
@@ -1186,11 +1211,15 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xF2FFFFFF),
+                            backgroundColor: const Color(0xF5FFFFFF),
                             foregroundColor: Colors.black,
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: const BorderSide(color: Colors.white, width: 1.0),
+                            ),
+                            shadowColor: const Color(0x33FFFFFF),
                           ),
                         ),
                       ],

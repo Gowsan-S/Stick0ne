@@ -83,25 +83,31 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(32),
                   gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
-                      Color(0x38FFFFFF), // Liquid glass top refraction highlight
-                      Color(0x12FFFFFF), // Crystalline translucent glass body
-                      Color(0x0AFFFFFF), // Transparent depth
+                      Color(0x40FFFFFF), // Luminous iOS specular glass sheen
+                      Color(0x1FFFFFFF), // Frosted optical glass body
+                      Color(0x14FFFFFF), // Transparent depth
                     ],
                     stops: [0.0, 0.45, 1.0],
                   ),
                   border: Border.all(
-                    color: const Color(0x66FFFFFF), // 40% white crystalline specular rim
+                    color: const Color(0x8CFFFFFF), // 55% white luminous specular rim
                     width: 1.2,
                   ),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x33000000),
-                      blurRadius: 24,
-                      spreadRadius: -4,
-                      offset: Offset(0, 8),
+                      color: Color(0x40000000),
+                      blurRadius: 28,
+                      spreadRadius: -2,
+                      offset: Offset(0, 10),
+                    ),
+                    BoxShadow(
+                      color: Color(0x1AFFFFFF),
+                      blurRadius: 2,
+                      spreadRadius: 0,
+                      offset: Offset(0, 1),
                     ),
                   ],
                 ),
