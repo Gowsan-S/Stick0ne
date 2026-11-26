@@ -380,6 +380,8 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
 
   Future<void> _deleteSinglePlacement(String id) async {
     HapticFeedback.mediumImpact();
+    final canvas = context.read<CanvasProvider>();
+    canvas.setIsGesturing(false);
     setState(() {
       _gesturePlacementId = null;
       _photoPointerId = null;
@@ -389,7 +391,6 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
       _activeScale = null;
       _activeRotation = null;
     });
-    final canvas = context.read<CanvasProvider>();
     canvas.removePlacement(id);
 
     // If overlay is live on phone screen, immediately update the screen display
@@ -507,6 +508,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
       if (_gesturePlacementId == null || _gesturePlacementId != hitStickerId) {
         // First finger touched down on this sticker
         _gesturePlacementId = hitStickerId;
+        canvas.setIsGesturing(true);
         canvas.bringPlacementToFront(hitStickerId);
         canvas.selectPlacement(hitStickerId);
         HapticFeedback.selectionClick();
@@ -671,6 +673,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
       canvas.updatePlacementRotation(id, _activeRotation!);
     }
 
+    canvas.setIsGesturing(false);
     setState(() {
       _gesturePlacementId = null;
       _photoPointerId = null;
@@ -718,7 +721,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
               right: 0,
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 180),
-                opacity: _gesturePlacementId != null ? 0.20 : 1.0,
+                opacity: _gesturePlacementId != null ? 0.18 : 1.0,
                 child: _buildTransparencyBottomPanel(canvas, activePlacement),
               ),
             ),
@@ -949,13 +952,17 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
     StickerPlacement activePlacement,
   ) {
     final isOverlayActive = canvas.isOverlayActive;
+    final isGesturing = _gesturePlacementId != null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
         child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ui.ImageFilter.blur(
+            sigmaX: isGesturing ? 4 : 16,
+            sigmaY: isGesturing ? 4 : 16,
+          ),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
@@ -963,29 +970,47 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0x38FFFFFF), // Liquid glass top refraction highlight
-                  Color(0x142C2C2E), // Fluid translucent center (crystal clear view of stickers)
-                  Color(0x24000000), // Liquid bottom refraction depth
+                  Color(0x3DFFFFFF), // Crystalline specular highlight
+                  Color(0x14FFFFFF), // Fluid transparent optical glass body
+                  Color(0x08FFFFFF), // Clean transparent bottom
                 ],
-                stops: [0.0, 0.5, 1.0],
+                stops: [0.0, 0.45, 1.0],
               ),
               border: Border.all(
-                color: const Color(0x40FFFFFF), // 25% white glossy refraction rim
-                width: 1.0,
+                color: const Color(0x66FFFFFF), // 40% white crystalline specular rim
+                width: 1.2,
               ),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x4D000000),
-                  blurRadius: 28,
+                  color: Color(0x33000000),
+                  blurRadius: 24,
                   spreadRadius: -4,
-                  offset: Offset(0, 10),
+                  offset: Offset(0, 8),
                 ),
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Top Glass Specular Reflection Highlight Line
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Color(0x4DFFFFFF),
+                        Color(0x99FFFFFF),
+                        Color(0x4DFFFFFF),
+                        Colors.transparent,
+                      ],
+                      stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+                    ),
+                  ),
+                ),
+
                 // 1. Transparency Slider Row
                 Row(
                   children: [
@@ -1030,7 +1055,7 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
 
                 // 2. Action Controls Row: Delete / Add / Remove Screen / Update Screen / Stick to Screen
                 SingleChildScrollView(

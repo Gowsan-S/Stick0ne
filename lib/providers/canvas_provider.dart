@@ -60,6 +60,15 @@ class CanvasProvider extends ChangeNotifier {
   List<SavedDesign> get savedDesigns => _savedDesigns;
   bool get isLoadingDesigns => _isLoadingDesigns;
   bool get isOverlayActive => _isOverlayActive;
+  bool _isGesturing = false;
+  bool get isGesturing => _isGesturing;
+
+  void setIsGesturing(bool gesturing) {
+    if (_isGesturing != gesturing) {
+      _isGesturing = gesturing;
+      notifyListeners();
+    }
+  }
 
   @visibleForTesting
   void setOverlayActiveForTest(bool active) {
