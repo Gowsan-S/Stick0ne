@@ -20,6 +20,12 @@ void main() {
     ),
   );
 
+  // Lock app orientation to portrait
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   runApp(const Stick0neApp());
 }
 

@@ -9,12 +9,14 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.core.app.NotificationCompat
@@ -139,6 +141,8 @@ class StickerOverlayService : Service() {
                 windowManager?.updateViewLayout(overlayImageView, params)
             }
 
+            updateOverlayOrientation(resources.configuration.orientation)
+
             isOverlayRunning = true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -246,6 +250,20 @@ class StickerOverlayService : Service() {
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateOverlayOrientation(newConfig.orientation)
+    }
+
+    private fun updateOverlayOrientation(orientation: Int) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // When the screen changes to horizontal (landscape), do not make the sticker horizontal or distort it
+            overlayImageView?.visibility = View.GONE
+        } else {
+            overlayImageView?.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {
