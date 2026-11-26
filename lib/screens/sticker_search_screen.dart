@@ -78,9 +78,9 @@ class _StickerSearchScreenState extends State<StickerSearchScreen> {
                   'Explore Stickers',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],

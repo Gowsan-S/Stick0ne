@@ -160,9 +160,9 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
                           'Stick to Screen',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: -0.6,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         SizedBox(height: 2),

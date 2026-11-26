@@ -150,7 +150,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   fontSize: 10,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected ? Colors.black : const Color(0xB3FFFFFF),
-                  letterSpacing: -0.2,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],

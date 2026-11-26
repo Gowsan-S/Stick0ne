@@ -34,6 +34,14 @@ Future<void> _loadTestFonts() async {
       await materialLoader.load();
     }
 
+    // Ethnocentric font - exact match for the official Stick0ne SVG logo letterforms
+    final ethnocentricFile = File('assets/fonts/Ethnocentric.ttf');
+    if (ethnocentricFile.existsSync()) {
+      final ethnoLoader = FontLoader('Ethnocentric');
+      ethnoLoader.addFont(Future.value(ByteData.view(ethnocentricFile.readAsBytesSync().buffer)));
+      await ethnoLoader.load();
+    }
+
     // Chakra Petch Regular, Bold, SemiBold for cyber-geometric logo-matched typography
     final chakraRegular = File('assets/fonts/ChakraPetch-Regular.ttf');
     if (chakraRegular.existsSync()) {
@@ -91,7 +99,7 @@ void main() {
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
-            fontFamily: 'ChakraPetch',
+            fontFamily: 'Ethnocentric',
             scaffoldBackgroundColor: const Color(0xFF000000),
             colorScheme: const ColorScheme.dark(
               primary: Colors.white,

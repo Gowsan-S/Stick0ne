@@ -318,9 +318,9 @@ class _StickerCreatorScreenState extends State<StickerCreatorScreen> {
             'Create Sticker',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.5,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
             ),
           ),
         ],
