@@ -34,19 +34,24 @@ Future<void> _loadTestFonts() async {
       await materialLoader.load();
     }
 
-    // Segoe UI Regular & Bold for crisp Apple-style typography
-    final segoeFile = File(r'C:\Windows\Fonts\segoeui.ttf');
-    if (segoeFile.existsSync()) {
-      final segoeLoader = FontLoader('Segoe UI');
-      segoeLoader.addFont(Future.value(ByteData.view(segoeFile.readAsBytesSync().buffer)));
-      await segoeLoader.load();
-    }
-
-    final segoeBoldFile = File(r'C:\Windows\Fonts\segoeuib.ttf');
-    if (segoeBoldFile.existsSync()) {
-      final boldLoader = FontLoader('Segoe UI');
-      boldLoader.addFont(Future.value(ByteData.view(segoeBoldFile.readAsBytesSync().buffer)));
-      await boldLoader.load();
+    // Chakra Petch Regular, Bold, SemiBold for cyber-geometric logo-matched typography
+    final chakraRegular = File('assets/fonts/ChakraPetch-Regular.ttf');
+    if (chakraRegular.existsSync()) {
+      final chakraLoader = FontLoader('ChakraPetch');
+      chakraLoader.addFont(Future.value(ByteData.view(chakraRegular.readAsBytesSync().buffer)));
+      final chakraBold = File('assets/fonts/ChakraPetch-Bold.ttf');
+      if (chakraBold.existsSync()) {
+        chakraLoader.addFont(Future.value(ByteData.view(chakraBold.readAsBytesSync().buffer)));
+      }
+      final chakraSemiBold = File('assets/fonts/ChakraPetch-SemiBold.ttf');
+      if (chakraSemiBold.existsSync()) {
+        chakraLoader.addFont(Future.value(ByteData.view(chakraSemiBold.readAsBytesSync().buffer)));
+      }
+      final chakraMedium = File('assets/fonts/ChakraPetch-Medium.ttf');
+      if (chakraMedium.existsSync()) {
+        chakraLoader.addFont(Future.value(ByteData.view(chakraMedium.readAsBytesSync().buffer)));
+      }
+      await chakraLoader.load();
     }
   } catch (e) {
     debugPrint('Font load error: $e');
@@ -86,7 +91,7 @@ void main() {
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
-            fontFamily: 'Segoe UI',
+            fontFamily: 'ChakraPetch',
             scaffoldBackgroundColor: const Color(0xFF000000),
             colorScheme: const ColorScheme.dark(
               primary: Colors.white,
