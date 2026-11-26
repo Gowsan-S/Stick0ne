@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,7 @@ import '../providers/canvas_provider.dart';
 import '../providers/sticker_provider.dart';
 import '../widgets/stick0ne_logo.dart';
 import '../widgets/vector_stickers.dart';
+import '../widgets/ios_glass_capsule.dart';
 
 class StickerSearchScreen extends StatefulWidget {
   final VoidCallback onNavigateToCanvas;
@@ -108,85 +108,52 @@ class _StickerSearchScreenState extends State<StickerSearchScreen> {
   Widget _buildIosSearchBar(StickerProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            height: 46,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x40FFFFFF), // Luminous iOS glass sheen
-                  Color(0x1FFFFFFF), // Frosted optical body
-                  Color(0x14FFFFFF), // Transparent depth
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-              border: Border.all(
-                color: const Color(0x8CFFFFFF), // Luminous glass specular rim
-                width: 1.2,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x33000000),
-                  blurRadius: 18,
-                  offset: Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: Color(0x1AFFFFFF),
-                  blurRadius: 2,
-                  offset: Offset(0, 1),
-                ),
-              ],
+      child: IosGlassCapsule(
+        height: 46,
+        radius: 100,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 6, right: 10),
+              child: Icon(CupertinoIcons.search, color: Colors.white, size: 20),
             ),
-            child: Row(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 14, right: 10),
-                  child: Icon(CupertinoIcons.search, color: Colors.white, size: 20),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                onChanged: provider.setSearchQuery,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: provider.setSearchQuery,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    cursorColor: Colors.white,
-                    decoration: const InputDecoration(
-                      hintText: 'Search stickers, tags, emojis...',
-                      hintStyle: TextStyle(
-                        color: Color(0xCCFFFFFF),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(vertical: 10),
-                    ),
+                cursorColor: Colors.white,
+                decoration: const InputDecoration(
+                  hintText: 'Search stickers, tags, emojis...',
+                  hintStyle: TextStyle(
+                    color: Color(0xB3FFFFFF),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
                   ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                 ),
-                if (_searchController.text.isNotEmpty)
-                  GestureDetector(
-                    onTap: () {
-                      _searchController.clear();
-                      provider.setSearchQuery('');
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Icon(CupertinoIcons.clear_circled_solid,
-                          color: Color(0x99FFFFFF), size: 18),
-                    ),
-                  ),
-              ],
+              ),
             ),
-          ),
+            if (_searchController.text.isNotEmpty)
+              GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  provider.setSearchQuery('');
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(CupertinoIcons.clear_circled_solid,
+                      color: Color(0x99FFFFFF), size: 18),
+                ),
+              ),
+          ],
         ),
       ),
     );

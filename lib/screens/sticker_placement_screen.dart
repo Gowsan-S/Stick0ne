@@ -10,6 +10,7 @@ import '../providers/canvas_provider.dart';
 import '../providers/sticker_provider.dart';
 import '../widgets/vector_stickers.dart';
 import '../widgets/stick0ne_logo.dart';
+import '../widgets/ios_glass_capsule.dart';
 
 class StickerPlacementScreen extends StatefulWidget {
   final VoidCallback onNavigateToSearch;
@@ -867,7 +868,17 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
             child: Container(
               width: canvasWidth,
               height: canvasHeight,
-              color: Colors.black,
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                gradient: RadialGradient(
+                  center: Alignment(0.0, 0.45),
+                  radius: 1.15,
+                  colors: [
+                    Color(0x24323242), // Soft ambient OLED refraction layer
+                    Color(0xFF000000), // Pure OLED black perimeter
+                  ],
+                ),
+              ),
               child: Stack(
                 fit: StackFit.expand,
                 clipBehavior: Clip.none, // Allows sticker to go after the end of screen
@@ -956,279 +967,238 @@ class _StickerPlacementScreenState extends State<StickerPlacementScreen> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(
-            sigmaX: isGesturing ? 4 : 20,
-            sigmaY: isGesturing ? 4 : 20,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x40FFFFFF), // Luminous iOS specular glass sheen
-                  Color(0x1FFFFFFF), // Frosted optical glass body
-                  Color(0x14FFFFFF), // Transparent depth
-                ],
-                stops: [0.0, 0.45, 1.0],
-              ),
-              border: Border.all(
-                color: const Color(0x8CFFFFFF), // 55% white luminous specular rim
-                width: 1.2,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 28,
-                  spreadRadius: -2,
-                  offset: Offset(0, 10),
-                ),
-                BoxShadow(
-                  color: Color(0x1AFFFFFF),
-                  blurRadius: 2,
-                  spreadRadius: 0,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+      child: IosGlassCapsule(
+        radius: 28,
+        blurSigma: isGesturing ? 6 : 28,
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. Transparency Slider Row
+            Row(
               children: [
-                // Top Glass Specular Reflection Highlight Line
-                Container(
-                  height: 1.2,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(1),
-                    gradient: const LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Color(0x66FFFFFF),
-                        Color(0xB3FFFFFF),
-                        Color(0x66FFFFFF),
-                        Colors.transparent,
-                      ],
-                      stops: [0.0, 0.2, 0.5, 0.8, 1.0],
+                const Icon(
+                  CupertinoIcons.circle_righthalf_fill,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Transparency',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.white,
+                      inactiveTrackColor: const Color(0x38FFFFFF),
+                      thumbColor: Colors.white,
+                      overlayColor: const Color(0x26FFFFFF),
+                      trackHeight: 3.5,
+                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                    ),
+                    child: Slider(
+                      value: activePlacement.opacity.clamp(0.05, 1.0),
+                      min: 0.05,
+                      max: 1.0,
+                      onChanged: (val) {
+                        canvas.updatePlacementOpacity(activePlacement.id, val);
+                      },
                     ),
                   ),
                 ),
-
-                // 1. Transparency Slider Row
-                Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.circle_righthalf_fill,
+                Container(
+                  width: 44,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${(activePlacement.opacity * 100).round()}%',
+                    style: const TextStyle(
                       color: Colors.white,
-                      size: 18,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 6),
+
+            // 2. Action Controls Row: Delete / Add / Remove Screen / Update Screen / Stick to Screen
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Delete Selected Sticker Button (Frosted Ruby Glass Pill)
+                  GestureDetector(
+                    onTap: () => _deleteSinglePlacement(activePlacement.id),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: const Color(0x33FF453A),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xB3FF453A), width: 1.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x33FF453A),
+                            blurRadius: 8,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(CupertinoIcons.trash, color: Color(0xFFFF453A), size: 13),
+                          SizedBox(width: 5),
+                          Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Color(0xFFFF453A),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // Quick Add button to place N stickers (Frosted Liquid Glass Pill)
+                  GestureDetector(
+                    onTap: () => _showAddStickerSheet(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x47FFFFFF), Color(0x21FFFFFF)],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xB3FFFFFF), width: 1.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x1FFFFFFF),
+                            blurRadius: 4,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(CupertinoIcons.plus, color: Colors.white, size: 13),
+                          SizedBox(width: 5),
+                          Text(
+                            'Add',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // If stuck on screen: Show "Remove Screen" + "Update Screen" (Feature 4 Edit/Delete after sticked)
+                  if (isOverlayActive) ...[
+                    GestureDetector(
+                      onTap: _removeFromScreenDirectly,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0x33FFFFFF), Color(0x1AFFFFFF)],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0x8CFFFFFF), width: 1.0),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(CupertinoIcons.clear_circled, color: Color(0xFFE5E5EA), size: 13),
+                            SizedBox(width: 5),
+                            Text(
+                              'Remove',
+                              style: TextStyle(
+                                color: Color(0xFFE5E5EA),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Transparency',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        value: activePlacement.opacity.clamp(0.05, 1.0),
-                        min: 0.05,
-                        max: 1.0,
-                        activeColor: Colors.white,
-                        inactiveColor: const Color(0x33FFFFFF), // Translucent frosted track
-                        onChanged: (val) {
-                          canvas.updatePlacementOpacity(activePlacement.id, val);
-                        },
-                      ),
-                    ),
-                    Container(
-                      width: 48,
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '${(activePlacement.opacity * 100).round()}%',
-                        style: const TextStyle(
-                          color: Colors.white,
+                    ElevatedButton.icon(
+                      onPressed: _isExporting ? null : _updateScreenDirectly,
+                      icon: const Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.black, size: 13),
+                      label: const Text(
+                        'Update',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          fontSize: 13,
                         ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xF5FFFFFF),
+                        foregroundColor: Colors.black,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        shadowColor: const Color(0x33FFFFFF),
+                      ),
+                    ),
+                  ] else ...[
+                    // If not stuck on screen: "Stick to Screen" primary button
+                    ElevatedButton.icon(
+                      onPressed: _isExporting ? null : _renderAndDisplayScreen,
+                      icon: const Icon(CupertinoIcons.pin_fill, color: Colors.black, size: 13),
+                      label: const Text(
+                        'Stick to Screen',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xF5FFFFFF),
+                        foregroundColor: Colors.black,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Colors.white, width: 1.0),
+                        ),
+                        shadowColor: const Color(0x33FFFFFF),
                       ),
                     ),
                   ],
-                ),
-
-                const SizedBox(height: 6),
-
-                // 2. Action Controls Row: Delete / Add / Remove Screen / Update Screen / Stick to Screen
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Delete Selected Sticker Button
-                      GestureDetector(
-                        onTap: () => _deleteSinglePlacement(activePlacement.id),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                          decoration: BoxDecoration(
-                            color: const Color(0x33FF453A),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0x80FF453A), width: 1.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x26FF453A),
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(CupertinoIcons.trash, color: Color(0xFFFF453A), size: 13),
-                              SizedBox(width: 4),
-                              Text(
-                                'Delete',
-                                style: TextStyle(
-                                  color: Color(0xFFFF453A),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 6),
-
-                      // Quick Add button to place N stickers
-                      GestureDetector(
-                        onTap: () => _showAddStickerSheet(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                          decoration: BoxDecoration(
-                            color: const Color(0x29FFFFFF), // Liquid frosted pill
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0x8CFFFFFF), width: 1.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x1A000000),
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(CupertinoIcons.plus, color: Colors.white, size: 13),
-                              SizedBox(width: 4),
-                              Text(
-                                'Add',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(width: 6),
-
-                      // If stuck on screen: Show "Remove Screen" + "Update Screen" (Feature 4 Edit/Delete after sticked)
-                      if (isOverlayActive) ...[
-                        GestureDetector(
-                          onTap: _removeFromScreenDirectly,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: const Color(0x29FFFFFF), // Liquid frosted pill
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: const Color(0x8CFFFFFF), width: 1.0),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(CupertinoIcons.clear_circled, color: Color(0xFFE5E5EA), size: 13),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Remove',
-                                  style: TextStyle(
-                                    color: Color(0xFFE5E5EA),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        ElevatedButton.icon(
-                          onPressed: _isExporting ? null : _updateScreenDirectly,
-                          icon: const Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.black, size: 13),
-                          label: const Text(
-                            'Update',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xF5FFFFFF),
-                            foregroundColor: Colors.black,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.white, width: 1.0),
-                            ),
-                            shadowColor: const Color(0x33FFFFFF),
-                          ),
-                        ),
-                      ] else ...[
-                        // If not stuck on screen: "Stick to Screen" primary button
-                        ElevatedButton.icon(
-                          onPressed: _isExporting ? null : _renderAndDisplayScreen,
-                          icon: const Icon(CupertinoIcons.pin_fill, color: Colors.black, size: 13),
-                          label: const Text(
-                            'Stick to Screen',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xF5FFFFFF),
-                            foregroundColor: Colors.black,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: const BorderSide(color: Colors.white, width: 1.0),
-                            ),
-                            shadowColor: const Color(0x33FFFFFF),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

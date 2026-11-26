@@ -167,6 +167,30 @@ class _VectorStickerPainter extends CustomPainter {
       case 'neon_crystal':
         _drawNeonCrystal(canvas, center, w, h);
         break;
+      case 'barcode_tag':
+        _drawBarcodeTag(canvas, center, w, h);
+        break;
+      case 'cyber_cross':
+        _drawCyberCross(canvas, center, w, h);
+        break;
+      case 'y2k_planet':
+        _drawPlanetRing(canvas, center, w, h);
+        break;
+      case 'digital_battery':
+        _drawDigitalBattery(canvas, center, w, h);
+        break;
+      case 'acid_smile':
+        _drawAcidSmile(canvas, center, w * 0.42);
+        break;
+      case 'sound_wave':
+        _drawSoundWave(canvas, center, w, h);
+        break;
+      case 'status_pill':
+        _drawStatusPill(canvas, center, w, h);
+        break;
+      case 'cyber_butterfly':
+        _drawCyberButterfly(canvas, center, w, h);
+        break;
       default:
         _drawKawaiiStar(canvas, center, w * 0.42);
     }
@@ -628,6 +652,247 @@ class _VectorStickerPainter extends CustomPainter {
     // Facet lines
     canvas.drawLine(Offset(center.dx, center.dy - h * 0.35), Offset(center.dx, center.dy + h * 0.35), border);
     canvas.drawLine(Offset(center.dx - w * 0.25, center.dy - h * 0.1), Offset(center.dx + w * 0.25, center.dy - h * 0.1), border);
+  }
+
+  void _drawBarcodeTag(Canvas canvas, Offset center, double w, double h) {
+    final tagRect = Rect.fromCenter(center: center, width: w * 0.88, height: h * 0.65);
+    final tagRRect = RRect.fromRectAndRadius(tagRect, const Radius.circular(8));
+    canvas.drawRRect(tagRRect, Paint()..color = const Color(0xF00A0A0C));
+    canvas.drawRRect(tagRRect, Paint()..color = Colors.white..strokeWidth = 2.0..style = PaintingStyle.stroke);
+
+    final titlePainter = TextPainter(
+      text: const TextSpan(
+        text: 'STICK0NE // OVERLAY',
+        style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 0.8),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    titlePainter.paint(canvas, Offset(tagRect.left + 10, tagRect.top + 6));
+
+    final barY = tagRect.top + 18;
+    final barH = tagRect.height * 0.40;
+    final barPaint = Paint()..color = Colors.white..strokeCap = StrokeCap.square;
+    final barWidths = [2.0, 1.0, 3.5, 1.0, 2.0, 4.0, 1.5, 2.5, 1.0, 3.0, 1.5, 4.0, 2.0, 1.0, 3.0, 2.0, 1.5, 3.5, 1.0, 2.0];
+    double currentX = tagRect.left + 10;
+    for (final bw in barWidths) {
+      barPaint.strokeWidth = bw;
+      canvas.drawLine(Offset(currentX, barY), Offset(currentX, barY + barH), barPaint);
+      currentX += bw + 2.2;
+      if (currentX > tagRect.right - 10) break;
+    }
+
+    final codePainter = TextPainter(
+      text: const TextSpan(
+        text: 'NO. 2026-X89',
+        style: TextStyle(color: Color(0xCCFFFFFF), fontSize: 7, fontWeight: FontWeight.w600, letterSpacing: 1.2),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    codePainter.paint(canvas, Offset(tagRect.left + 10, tagRect.bottom - 13));
+  }
+
+  void _drawCyberCross(Canvas canvas, Offset center, double w, double h) {
+    final paint = Paint()..color = Colors.white..style = PaintingStyle.fill;
+    final starPath = Path();
+    final rOuter = w * 0.42;
+    final rInner = w * 0.08;
+    for (int i = 0; i < 8; i++) {
+      final r = i.isEven ? rOuter : rInner;
+      final angle = (i * math.pi / 4) - (math.pi / 2);
+      final x = center.dx + r * math.cos(angle);
+      final y = center.dy + r * math.sin(angle);
+      if (i == 0) {
+        starPath.moveTo(x, y);
+      } else {
+        starPath.lineTo(x, y);
+      }
+    }
+    starPath.close();
+    canvas.drawPath(starPath, paint);
+
+    final holePath = Path();
+    final rHole = w * 0.04;
+    for (int i = 0; i < 4; i++) {
+      final angle = (i * math.pi / 2) - (math.pi / 2);
+      final x = center.dx + rHole * math.cos(angle);
+      final y = center.dy + rHole * math.sin(angle);
+      if (i == 0) {
+        holePath.moveTo(x, y);
+      } else {
+        holePath.lineTo(x, y);
+      }
+    }
+    holePath.close();
+    canvas.drawPath(holePath, Paint()..color = Colors.black);
+
+    final dotOffset = w * 0.30;
+    final dotPaint = Paint()..color = Colors.white;
+    canvas.drawCircle(Offset(center.dx - dotOffset, center.dy - dotOffset), 2.5, dotPaint);
+    canvas.drawCircle(Offset(center.dx + dotOffset, center.dy - dotOffset), 2.5, dotPaint);
+    canvas.drawCircle(Offset(center.dx - dotOffset, center.dy + dotOffset), 2.5, dotPaint);
+    canvas.drawCircle(Offset(center.dx + dotOffset, center.dy + dotOffset), 2.5, dotPaint);
+  }
+
+  void _drawPlanetRing(Canvas canvas, Offset center, double w, double h) {
+    final sphereRadius = w * 0.24;
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(-math.pi / 6);
+    final ringRect = Rect.fromCenter(center: Offset.zero, width: w * 0.88, height: h * 0.24);
+    final ringPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawOval(ringRect, ringPaint);
+    canvas.restore();
+
+    final spherePaint = Paint()..color = Colors.white..style = PaintingStyle.fill;
+    canvas.drawCircle(center, sphereRadius, spherePaint);
+
+    final shadowPaint = Paint()..color = const Color(0xFF141416)..style = PaintingStyle.fill;
+    final shadowPath = Path()
+      ..addArc(Rect.fromCircle(center: center, radius: sphereRadius), -math.pi / 2, math.pi)
+      ..arcTo(Rect.fromCenter(center: center, width: sphereRadius * 0.5, height: sphereRadius * 2), math.pi / 2, -math.pi, false);
+    canvas.drawPath(shadowPath, shadowPaint);
+
+    final linePaint = Paint()..color = Colors.white..strokeWidth = 1.5..style = PaintingStyle.stroke;
+    canvas.drawArc(Rect.fromCircle(center: center, radius: sphereRadius * 0.7), 0.2, 2.8, false, linePaint);
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(-math.pi / 6);
+    canvas.drawArc(ringRect, 0, math.pi, false, ringPaint);
+    canvas.restore();
+
+    canvas.drawCircle(Offset(center.dx + w * 0.32, center.dy - h * 0.28), 2.0, Paint()..color = Colors.white);
+    canvas.drawCircle(Offset(center.dx - w * 0.34, center.dy + h * 0.26), 1.5, Paint()..color = Colors.white);
+  }
+
+  void _drawDigitalBattery(Canvas canvas, Offset center, double w, double h) {
+    final bodyW = w * 0.72;
+    final bodyH = h * 0.40;
+    final bodyRect = Rect.fromCenter(center: Offset(center.dx - w * 0.03, center.dy), width: bodyW, height: bodyH);
+    final bodyRRect = RRect.fromRectAndRadius(bodyRect, const Radius.circular(6));
+
+    final borderPaint = Paint()..color = Colors.white..strokeWidth = 2.2..style = PaintingStyle.stroke;
+    canvas.drawRRect(bodyRRect, borderPaint);
+
+    final tipRect = Rect.fromLTWH(bodyRect.right, center.dy - 6, 4, 12);
+    canvas.drawRRect(RRect.fromRectAndRadius(tipRect, const Radius.circular(2)), Paint()..color = Colors.white);
+
+    const cellCount = 3;
+    final cellGap = 3.0;
+    final cellW = (bodyW - 12 - (cellGap * (cellCount - 1))) / cellCount;
+    final cellPaint = Paint()..color = Colors.white..style = PaintingStyle.fill;
+    for (int i = 0; i < cellCount; i++) {
+      final left = bodyRect.left + 6 + i * (cellW + cellGap);
+      final cellRRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(left, bodyRect.top + 5, cellW, bodyH - 10),
+        const Radius.circular(3),
+      );
+      canvas.drawRRect(cellRRect, cellPaint);
+    }
+  }
+
+  void _drawAcidSmile(Canvas canvas, Offset center, double radius) {
+    final outlinePaint = Paint()..color = Colors.white..strokeWidth = 3.0..style = PaintingStyle.stroke;
+    final fillPaint = Paint()..color = const Color(0xF00A0A0C)..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, fillPaint);
+    canvas.drawCircle(center, radius, outlinePaint);
+
+    final eyePaint = Paint()..color = Colors.white..strokeWidth = 2.5..strokeCap = StrokeCap.round;
+    final eyeSize = radius * 0.25;
+
+    final leftEyeCenter = Offset(center.dx - radius * 0.38, center.dy - radius * 0.2);
+    canvas.drawLine(leftEyeCenter - Offset(eyeSize / 2, eyeSize / 2), leftEyeCenter + Offset(eyeSize / 2, eyeSize / 2), eyePaint);
+    canvas.drawLine(leftEyeCenter - Offset(-eyeSize / 2, eyeSize / 2), leftEyeCenter + Offset(-eyeSize / 2, eyeSize / 2), eyePaint);
+
+    final rightEyeCenter = Offset(center.dx + radius * 0.38, center.dy - radius * 0.2);
+    canvas.drawLine(rightEyeCenter - Offset(eyeSize / 2, eyeSize / 2), rightEyeCenter + Offset(eyeSize / 2, eyeSize / 2), eyePaint);
+    canvas.drawLine(rightEyeCenter - Offset(-eyeSize / 2, eyeSize / 2), rightEyeCenter + Offset(-eyeSize / 2, eyeSize / 2), eyePaint);
+
+    final smilePath = Path()
+      ..moveTo(center.dx - radius * 0.5, center.dy + radius * 0.15)
+      ..quadraticBezierTo(center.dx, center.dy + radius * 0.65, center.dx + radius * 0.5, center.dy + radius * 0.15);
+    canvas.drawPath(smilePath, outlinePaint..strokeCap = StrokeCap.round);
+  }
+
+  void _drawSoundWave(Canvas canvas, Offset center, double w, double h) {
+    final wavePaint = Paint()..color = Colors.white..strokeCap = StrokeCap.round..strokeWidth = 3.5;
+    final heights = [0.25, 0.55, 0.90, 0.45, 1.0, 0.70, 0.85, 0.40, 0.20];
+    final barSpacing = (w * 0.75) / (heights.length - 1);
+    final startX = center.dx - (w * 0.75) / 2;
+    final maxH = h * 0.5;
+    for (int i = 0; i < heights.length; i++) {
+      final x = startX + i * barSpacing;
+      final barHeight = maxH * heights[i];
+      canvas.drawLine(Offset(x, center.dy - barHeight / 2), Offset(x, center.dy + barHeight / 2), wavePaint);
+    }
+  }
+
+  void _drawStatusPill(Canvas canvas, Offset center, double w, double h) {
+    final pillRect = Rect.fromCenter(center: center, width: w * 0.88, height: h * 0.38);
+    final pillRRect = RRect.fromRectAndRadius(pillRect, Radius.circular(pillRect.height / 2));
+    canvas.drawRRect(pillRRect, Paint()..color = const Color(0xE60A0A0C));
+    canvas.drawRRect(pillRRect, Paint()..color = Colors.white..strokeWidth = 1.8..style = PaintingStyle.stroke);
+
+    final dotCenter = Offset(pillRect.left + 14, center.dy);
+    canvas.drawCircle(dotCenter, 3.5, Paint()..color = const Color(0xFF30D158));
+    canvas.drawCircle(dotCenter, 5.5, Paint()..color = const Color(0x4030D158));
+
+    final textPainter = TextPainter(
+      text: const TextSpan(
+        text: 'SYS ACTIVE',
+        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.2),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    textPainter.paint(canvas, Offset(dotCenter.dx + 8, center.dy - textPainter.height / 2));
+  }
+
+  void _drawCyberButterfly(Canvas canvas, Offset center, double w, double h) {
+    final wingPaint = Paint()..color = Colors.white..strokeWidth = 1.8..style = PaintingStyle.stroke;
+    final fillPaint = Paint()..color = const Color(0x33FFFFFF)..style = PaintingStyle.fill;
+
+    final lTop = Path()
+      ..moveTo(center.dx, center.dy - 4)
+      ..lineTo(center.dx - w * 0.38, center.dy - h * 0.35)
+      ..lineTo(center.dx - w * 0.42, center.dy - h * 0.1)
+      ..lineTo(center.dx - w * 0.15, center.dy + 4)
+      ..close();
+    canvas.drawPath(lTop, fillPaint);
+    canvas.drawPath(lTop, wingPaint);
+
+    final rTop = Path()
+      ..moveTo(center.dx, center.dy - 4)
+      ..lineTo(center.dx + w * 0.38, center.dy - h * 0.35)
+      ..lineTo(center.dx + w * 0.42, center.dy - h * 0.1)
+      ..lineTo(center.dx + w * 0.15, center.dy + 4)
+      ..close();
+    canvas.drawPath(rTop, fillPaint);
+    canvas.drawPath(rTop, wingPaint);
+
+    final lBot = Path()
+      ..moveTo(center.dx, center.dy + 4)
+      ..lineTo(center.dx - w * 0.28, center.dy + h * 0.32)
+      ..lineTo(center.dx - w * 0.1, center.dy + h * 0.28)
+      ..close();
+    canvas.drawPath(lBot, fillPaint);
+    canvas.drawPath(lBot, wingPaint);
+
+    final rBot = Path()
+      ..moveTo(center.dx, center.dy + 4)
+      ..lineTo(center.dx + w * 0.28, center.dy + h * 0.32)
+      ..lineTo(center.dx + w * 0.1, center.dy + h * 0.28)
+      ..close();
+    canvas.drawPath(rBot, fillPaint);
+    canvas.drawPath(rBot, wingPaint);
+
+    final bodyPaint = Paint()..color = Colors.white..strokeWidth = 2.0..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(center.dx, center.dy - h * 0.18), Offset(center.dx, center.dy + h * 0.22), bodyPaint);
+    canvas.drawLine(Offset(center.dx, center.dy - h * 0.18), Offset(center.dx - 6, center.dy - h * 0.28), bodyPaint..strokeWidth = 1.2);
+    canvas.drawLine(Offset(center.dx, center.dy - h * 0.18), Offset(center.dx + 6, center.dy - h * 0.28), bodyPaint..strokeWidth = 1.2);
   }
 
   @override

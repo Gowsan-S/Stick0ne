@@ -136,6 +136,23 @@ class _PreviewDisplayModalState extends State<PreviewDisplayModal> {
             ),
             child: Column(
             children: [
+              // Top Glass Specular Meniscus Highlight Line
+              Container(
+                height: 1.2,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      Color(0x80FFFFFF),
+                      Color(0xE6FFFFFF),
+                      Color(0x80FFFFFF),
+                      Colors.transparent,
+                    ],
+                    stops: [0.0, 0.2, 0.5, 0.8, 1.0],
+                  ),
+                ),
+              ),
+
               // iOS Grabber bar
               Container(
                 margin: const EdgeInsets.only(top: 12, bottom: 8),
