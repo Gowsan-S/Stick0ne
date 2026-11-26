@@ -45,7 +45,6 @@ class Stick0neApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.dark,
-          fontFamily: 'ChakraPetch',
           scaffoldBackgroundColor: const Color(0xFF000000), // OLED Pure Black
           canvasColor: const Color(0xFF000000),
           cardColor: const Color(0xFF1C1C1E), // iOS Grouped Inset Card
